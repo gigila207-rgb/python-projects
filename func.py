@@ -8,34 +8,45 @@ def multiply(a, b):
    return a * b
 
 def divide(a, b):
-   return a / b
+    if b == 0:
+        return "Cannot divide by zero"
+    return a / b
 
-print("""Choose an operation:
+while True:
+
+    print("""Choose an operation:
 1. Add
 2. Subtract
 3. Multiply
 4. Divide
+5. Exit
 """)
 
-operation = int(input())
-num1 = int(input("First number: "))
-num2 = int(input("Second number: "))
-if operation == 1 :
-  result = add(num1,num2)
-  print("the result is : ",result )
-elif  operation == 2 :
-  result = subtract(num1,num2)
-  print("the result is : ",result )
-elif operation == 3 :
-  result = multiply(num1,num2)
-  print("the result is : ",result )
+    operation = int(input("Choose: "))
 
-elif operation == 4 :
-  result = divide(num1,num2)
-  print("the result is : ",result )
-else :
-  print("invalid operation ,please try again")
+    if operation == 5:
+        print("Goodbye!")
+        break
 
+    num1 = float(input("First number: "))
+    num2 = float(input("Second number: "))
+
+    if operation == 1:
+        result = add(num1, num2)
+
+    elif operation == 2:
+        result = subtract(num1, num2)
+
+    elif operation == 3:
+        result = multiply(num1, num2)
+
+    elif operation == 4:
+        result = divide(num1, num2)
+
+    else:
+        result = "Invalid operation"
+
+    print("The result is:", result)
 
 
 
