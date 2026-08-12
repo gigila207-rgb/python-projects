@@ -41,7 +41,7 @@ def save_expenses(expenses):
 
 
 # ========================================
-# CORE FUNCTIONALITY
+# ADD EXPENSE
 # ========================================
 
 def add_expense(expenses, amount, category, note=""):
@@ -49,7 +49,9 @@ def add_expense(expenses, amount, category, note=""):
 
     # Generate a unique ID
     if expenses:
-        new_id = max(expense["id"] for expense in expenses) + 1
+        new_id = max(
+            expense["id"] for expense in expenses
+        ) + 1
     else:
         new_id = 1
 
@@ -65,11 +67,83 @@ def add_expense(expenses, amount, category, note=""):
 
     save_expenses(expenses)
 
-    print(f"\n✅ Expense added successfully!")
+    print("\n✅ Expense added successfully!")
     print(f"   ID: {new_id}")
     print(f"   Amount: ${amount:.2f}")
     print(f"   Category: {category}")
 
+
+# ========================================
+# EDIT EXPENSE
+# ========================================
+
+def edit_expense(expenses, expense_id):
+    """Edit an existing expense."""
+
+    for expense in expenses:
+
+        if expense["id"] == expense_id:
+
+            print("\nCurrent expense:")
+            print(f"Amount: ${expense['amount']:.2f}")
+            print(f"Category: {expense['category']}")
+            print(f"Note: {expense['note']}")
+
+            # Edit amount
+            new_amount = input(
+                f"\nNew amount "
+                f"(Enter to keep ${expense['amount']:.2f}): "
+            ).strip()
+
+            if new_amount:
+
+                try:
+                    new_amount = float(new_amount)
+
+                    if new_amount <= 0:
+                        print(
+                            "❌ Amount must be greater than 0."
+                        )
+                        return expenses
+
+                    expense["amount"] = new_amount
+
+                except ValueError:
+                    print("❌ Invalid amount.")
+                    return expenses
+
+            # Edit category
+            new_category = input(
+                f"New category "
+                f"(Enter to keep {expense['category']}): "
+            ).strip()
+
+            if new_category:
+                expense["category"] = new_category
+
+            # Edit note
+            new_note = input(
+                f"New note "
+                f"(Enter to keep '{expense['note']}'): "
+            ).strip()
+
+            if new_note:
+                expense["note"] = new_note
+
+            save_expenses(expenses)
+
+            print("\n✅ Expense updated successfully!")
+
+            return expenses
+
+    print(f"\n❌ No expense found with ID {expense_id}.")
+
+    return expenses
+
+
+# ========================================
+# DELETE EXPENSE
+# ========================================
 
 def delete_expense(expenses, expense_id):
     """Delete an expense by its ID."""
@@ -81,21 +155,39 @@ def delete_expense(expenses, expense_id):
     ]
 
     if len(new_expenses) == len(expenses):
-        print(f"\n❌ No expense found with ID {expense_id}.")
+
+        print(
+            f"\n❌ No expense found with ID {expense_id}."
+        )
+
         return expenses
 
     save_expenses(new_expenses)
 
-    print(f"\n✅ Expense {expense_id} deleted successfully.")
+    print(
+        f"\n✅ Expense {expense_id} "
+        f"deleted successfully."
+    )
 
     return new_expenses
 
 
+# ========================================
+# TOTAL SPENDING
+# ========================================
+
 def total_spent(expenses):
     """Calculate total spending."""
 
-    return sum(expense["amount"] for expense in expenses)
+    return sum(
+        expense["amount"]
+        for expense in expenses
+    )
 
+
+# ========================================
+# TOTAL BY CATEGORY
+# ========================================
 
 def total_by_category(expenses):
     """Calculate total spending for each category."""
@@ -103,6 +195,7 @@ def total_by_category(expenses):
     categories = {}
 
     for expense in expenses:
+
         category = expense["category"]
 
         categories[category] = (
@@ -113,21 +206,32 @@ def total_by_category(expenses):
     return categories
 
 
+# ========================================
+# FILTER BY CATEGORY
+# ========================================
+
 def filter_by_category(expenses, category):
     """Return expenses matching a category."""
 
     return [
         expense
         for expense in expenses
-        if expense["category"].lower() == category.lower()
+        if expense["category"].lower()
+        == category.lower()
     ]
 
+
+# ========================================
+# LIST EXPENSES
+# ========================================
 
 def list_expenses(expenses):
     """Display all expenses."""
 
     if not expenses:
+
         print("\n📭 No expenses recorded yet.")
+
         return
 
     print(
@@ -141,6 +245,7 @@ def list_expenses(expenses):
     print("-" * 60)
 
     for expense in expenses:
+
         print(
             f"{expense['id']:<5}"
             f"{expense['date']:<12}"
@@ -168,8 +273,9 @@ def print_menu():
 3. View total spent
 4. View totals by category
 5. Filter by category
-6. Delete an expense
-7. Exit
+6. Edit an expense
+7. Delete an expense
+8. Exit
 
 ========================================
 """)
@@ -187,27 +293,41 @@ def main():
 
         print_menu()
 
-        choice = input("Choose an option (1-7): ").strip()
+        choice = input(
+            "Choose an option (1-8): "
+        ).strip()
 
         # --------------------------------
-        # ADD EXPENSE
+        # ADD
         # --------------------------------
 
         if choice == "1":
 
             try:
-                amount = float(input("Amount: $"))
+
+                amount = float(
+                    input("Amount: $")
+                )
 
                 if amount <= 0:
-                    print("❌ Amount must be greater than 0.")
+
+                    print(
+                        "❌ Amount must be greater than 0."
+                    )
+
                     continue
 
                 category = input(
-                    "Category (food, transport, school...): "
+                    "Category "
+                    "(food, transport, school...): "
                 ).strip()
 
                 if not category:
-                    print("❌ Category cannot be empty.")
+
+                    print(
+                        "❌ Category cannot be empty."
+                    )
+
                     continue
 
                 note = input(
@@ -222,10 +342,13 @@ def main():
                 )
 
             except ValueError:
-                print("❌ Please enter a valid number.")
+
+                print(
+                    "❌ Please enter a valid number."
+                )
 
         # --------------------------------
-        # VIEW EXPENSES
+        # VIEW
         # --------------------------------
 
         elif choice == "2":
@@ -233,35 +356,50 @@ def main():
             list_expenses(expenses)
 
         # --------------------------------
-        # TOTAL SPENDING
+        # TOTAL
         # --------------------------------
 
         elif choice == "3":
 
             total = total_spent(expenses)
 
-            print(f"\n💰 Total spent: ${total:.2f}")
+            print(
+                f"\n💰 Total spent: ${total:.2f}"
+            )
 
         # --------------------------------
-        # TOTAL BY CATEGORY
+        # CATEGORY TOTALS
         # --------------------------------
 
         elif choice == "4":
 
-            totals = total_by_category(expenses)
+            totals = total_by_category(
+                expenses
+            )
 
             if not totals:
-                print("\n📭 No expenses yet.")
+
+                print(
+                    "\n📭 No expenses yet."
+                )
 
             else:
-                print("\n📊 Spending by category:")
+
+                print(
+                    "\n📊 Spending by category:"
+                )
+
                 print("-" * 30)
 
                 for category, amount in totals.items():
-                    print(f"{category:<15} ${amount:.2f}")
+
+                    print(
+                        f"{category:<15} "
+                        f"${amount:.2f}"
+                    )
 
         # --------------------------------
-        # FILTER BY CATEGORY
+        # FILTER
         # --------------------------------
 
         elif choice == "5":
@@ -276,22 +414,53 @@ def main():
             )
 
             if not results:
+
                 print(
                     f"\n❌ No expenses found "
                     f"for '{category}'."
                 )
+
             else:
+
                 list_expenses(results)
 
         # --------------------------------
-        # DELETE EXPENSE
+        # EDIT
         # --------------------------------
 
         elif choice == "6":
 
             try:
+
                 expense_id = int(
-                    input("Enter expense ID to delete: ")
+                    input(
+                        "Enter expense ID to edit: "
+                    )
+                )
+
+                expenses = edit_expense(
+                    expenses,
+                    expense_id
+                )
+
+            except ValueError:
+
+                print(
+                    "❌ Please enter a valid ID number."
+                )
+
+        # --------------------------------
+        # DELETE
+        # --------------------------------
+
+        elif choice == "7":
+
+            try:
+
+                expense_id = int(
+                    input(
+                        "Enter expense ID to delete: "
+                    )
                 )
 
                 expenses = delete_expense(
@@ -300,26 +469,30 @@ def main():
                 )
 
             except ValueError:
-                print("❌ Please enter a valid ID number.")
+
+                print(
+                    "❌ Please enter a valid ID number."
+                )
 
         # --------------------------------
         # EXIT
         # --------------------------------
 
-        elif choice == "7":
+        elif choice == "8":
 
             print("\n👋 Goodbye!")
+
             break
 
         # --------------------------------
-        # INVALID OPTION
+        # INVALID
         # --------------------------------
 
         else:
 
             print(
                 "\n❌ Invalid option. "
-                "Please choose between 1 and 7."
+                "Please choose between 1 and 8."
             )
 
 
